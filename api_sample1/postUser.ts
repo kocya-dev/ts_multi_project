@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
 import { DynamoDBWrapper } from "./dynamoDBWrapper";
 import { UserItem } from "./dynamoDBWrapperTypes";
+import { createSucceed, createFail, createInvalidArgumentError, createArgumentRangeError } from "./createResponse";
 
 // Lambda エントリーポイント
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -26,39 +27,3 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     return createFail(JSON.stringify(err));
   }
 };
-
-function createSucceed(): APIGatewayProxyResult | PromiseLike<APIGatewayProxyResult> {
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: "end",
-    }),
-  };
-}
-
-function createFail(msg: string): APIGatewayProxyResult | PromiseLike<APIGatewayProxyResult> {
-  return {
-    statusCode: 500,
-    body: JSON.stringify({
-      message: "exception occurred",
-    }),
-  };
-}
-
-function createInvalidArgumentError(): APIGatewayProxyResult | PromiseLike<APIGatewayProxyResult> {
-  return {
-    statusCode: 500,
-    body: JSON.stringify({
-      message: "argument error",
-    }),
-  };
-}
-
-function createArgumentRangeError(): APIGatewayProxyResult | PromiseLike<APIGatewayProxyResult> {
-  return {
-    statusCode: 500,
-    body: JSON.stringify({
-      message: "argument error",
-    }),
-  };
-}

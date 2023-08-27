@@ -3,16 +3,13 @@ import { DynamoDBDocumentClient, GetCommand, GetCommandOutput, PutCommand, PutCo
 import { UserItem } from "./dynamoDBWrapperTypes";
 
 export class DynamoDBWrapper {
-  private _client: DynamoDBClient;
+  private _client: DynamoDBDocumentClient;
   constructor() {
     const config: DynamoDBClientConfig = {
       region: "ap-northeast-1",
     };
-    this._client = new DynamoDBClient(config);
-  }
-  createDynamoDocument(): DynamoDBDocumentClient {
-    const documentClient = DynamoDBDocumentClient.from(this._client);
-    return documentClient;
+    const dbClient: DynamoDBClient = new DynamoDBClient(config);
+    this._client = DynamoDBDocumentClient.from(dbClient);
   }
   public async getUser(id: number): Promise<UserItem> {
     const command = new GetCommand({

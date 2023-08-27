@@ -2,6 +2,7 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 
 import { DynamoDBWrapper } from "./dynamoDBWrapper";
 import { UserItem } from "./dynamoDBWrapperTypes";
+import { createSucceed, createFail, createInvalidArgumentError, createArgumentRangeError } from "./createResponse";
 
 // Lambda エントリーポイント
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
@@ -12,14 +13,9 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     return createInvalidArgumentError();
   }
 
-  let id = 0;
-  try {
-    id = +event.pathParameters["user_id"];
-    if (id < 0) {
-      return createArgumentRangeError();
-    }
-  } catch (err) {
-    return createInvalidArgumentError();
+  let id = +event.pathParameters["user_id"];
+  if (id < 0 || isNaN(id)) {
+    return createArgumentRangeError();
   }
 
   try {
@@ -37,40 +33,3 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     return createFail(JSON.stringify(err));
   }
 };
-
-function createSucceed(result: any): APIGatewayProxyResult | PromiseLike<APIGatewayProxyResult> {
-  return {
-    statusCode: 200,
-    body: JSON.stringify({
-      message: "end",
-      result: result,
-    }),
-  };
-}
-
-function createFail(msg: string): APIGatewayProxyResult | PromiseLike<APIGatewayProxyResult> {
-  return {
-    statusCode: 500,
-    body: JSON.stringify({
-      message: msg,
-    }),
-  };
-}
-
-function createInvalidArgumentError(): APIGatewayProxyResult | PromiseLike<APIGatewayProxyResult> {
-  return {
-    statusCode: 500,
-    body: JSON.stringify({
-      message: "invalid argument error",
-    }),
-  };
-}
-
-function createArgumentRangeError(): APIGatewayProxyResult | PromiseLike<APIGatewayProxyResult> {
-  return {
-    statusCode: 500,
-    body: JSON.stringify({
-      message: "argument range error",
-    }),
-  };
-}
