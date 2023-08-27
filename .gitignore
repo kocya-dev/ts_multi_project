@@ -139,3 +139,6 @@ node_modules
 # CDK asset staging directory
 .cdk.staging
 cdk.out
+
+# jest report
+jest_html_reporters.html
