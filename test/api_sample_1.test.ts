@@ -55,7 +55,7 @@ const getDummyAPIGatewayProxyEvent = (): APIGatewayProxyEvent => {
   };
 };
 
-describe("ut:getuser", () => {
+describe("getuser", () => {
   test("ut:getUser 成功", async () => {
     // mock準備
     mockDynamoDBDocumentClient.on(GetCommand).resolves({ Item: { id: 1, name: "test_name" } });
@@ -120,4 +120,8 @@ describe("ut:getuser", () => {
 
     expect(response.statusCode).toBe(500);
   });
+
+  test("it:getUser ダミー1", async () => {});
+
+  test("getUser ダミー2", async () => {});
 });
