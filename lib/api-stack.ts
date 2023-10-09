@@ -10,20 +10,29 @@ export class ApiStack extends cdk.Stack {
     const accountId = cdk.Stack.of(this).account;
     const region = cdk.Stack.of(this).region;
 
+    const dynamoDbPolicy: cdk.aws_iam.PolicyStatement = this.creatrePolicyDynamoDBUsing();
+    const s3Policy: cdk.aws_iam.PolicyStatement = this.creatrePolicyS3Using();
+
     // GET/POSTなどメソッド別に関連付ける方法
-    const funcGetUser = this.createLambda(this, "GetUser", "api_sample1/getUser.ts", "handler", this.creatrePolicyDynamoDBUsing());
-    const funcPostUser = this.createLambda(this, "PostUser", "api_sample1/postUser.ts", "handler", this.creatrePolicyDynamoDBUsing());
+    const funcGetUser = this.createLambda(this, "GetUser", "api_sample1/getUser.ts", "handler", dynamoDbPolicy);
+    const funcPostUser = this.createLambda(this, "PostUser", "api_sample1/postUser.ts", "handler", dynamoDbPolicy);
+    const funcGetFile = this.createLambda(this, "GetFile", "api_sample3/getFile.ts", "handler", s3Policy);
+    const funcPostFile = this.createLambda(this, "PostFile", "api_sample3/postFile.ts", "handler", s3Policy);
 
     const api = new apigw.RestApi(this, "NormalApi");
     const apiUsers = api.root.addResource("users", {});
     const apiUser = apiUsers.addResource("{user_id}");
     apiUser.addMethod("GET", new apigw.LambdaIntegration(funcGetUser));
     apiUser.addMethod("POST", new apigw.LambdaIntegration(funcPostUser));
+    const apiFiles = api.root.addResource("files", {});
+    const apiFileName = apiFiles.addResource("{name}");
+    apiFileName.addMethod("GET", new apigw.LambdaIntegration(funcGetFile));
+    apiFileName.addMethod("POST", new apigw.LambdaIntegration(funcPostFile));
 
     // GET/POSTなどを1lambdaで受けて内部で分岐する方法
-    const funcMachines = this.createLambda(this, "MachineProxy", "api_sample2/proxy.ts", "handler", this.creatrePolicyDynamoDBUsing());
+    const funcMachines = this.createLambda(this, "MachineProxy", "api_sample2/proxy.ts", "handler", dynamoDbPolicy);
     const apiMachines = api.root.addResource("machines", {});
-    const apiMachine = apiMachines.addResource("{user_id}");
+    const apiMachine = apiMachines.addResource("{user_id2}");
     const apiMachinesProxy = apiMachine.addProxy({
       anyMethod: true,
       defaultIntegration: new apigw.LambdaIntegration(funcMachines),
@@ -49,6 +58,13 @@ export class ApiStack extends cdk.Stack {
   creatrePolicyDynamoDBUsing(): cdk.aws_iam.PolicyStatement {
     return new cdk.aws_iam.PolicyStatement({
       actions: ["dynamodb:GetItem", "dynamodb:PutItem", "dynamodb:UpdateItem", "dynamodb:DescribeTable"],
+      effect: cdk.aws_iam.Effect.ALLOW,
+      resources: [`*`],
+    });
+  }
+  creatrePolicyS3Using(): cdk.aws_iam.PolicyStatement {
+    return new cdk.aws_iam.PolicyStatement({
+      actions: ["s3:CreateBucket", "s3:DeleteBucket", "s3:DeleteObject", "s3:GetObject", "s3:ListBucket", "s3:PutObject"],
       effect: cdk.aws_iam.Effect.ALLOW,
       resources: [`*`],
     });
