@@ -16,7 +16,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
 
   try {
     const s3: S3Wrapper = new S3Wrapper();
-    const resultCreate: boolean = await s3.create("storage-bucket-test");
+    const resultCreate: boolean = await s3.create("storage-access-bucket-test");
     console.log(resultCreate);
 
     const response = await s3.getStringObject(name);

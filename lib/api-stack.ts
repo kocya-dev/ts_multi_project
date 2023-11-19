@@ -64,7 +64,7 @@ export class ApiStack extends cdk.Stack {
   }
   creatrePolicyS3Using(): cdk.aws_iam.PolicyStatement {
     return new cdk.aws_iam.PolicyStatement({
-      actions: ["s3:CreateBucket", "s3:DeleteBucket", "s3:DeleteObject", "s3:GetObject", "s3:ListBucket", "s3:PutObject"],
+      actions: [`*`],
       effect: cdk.aws_iam.Effect.ALLOW,
       resources: [`*`],
     });

@@ -13,16 +13,7 @@ export class S3Wrapper {
   private _bucketName: string | undefined = undefined;
 
   constructor() {
-    this._client = new S3Client({
-      region: "ap-northeast-1",
-      endpoint: 
-      /*
-      credentials: {
-        accessKeyId: "sample",
-        secretAccessKey: "sample",
-      },
-      */
-    });
+    this._client = new S3Client({});
   }
   public async create(bucketName: string): Promise<boolean> {
     console.log(bucketName); // 確認用
@@ -42,15 +33,6 @@ export class S3Wrapper {
       console.error(err); // 既にバケットがある場合: Error.message BucketAlreadyExists
       /*
 ERROR	BucketAlreadyExists: The requested bucket name is not available. The bucket namespace is shared by all users of the system. Please select a different name and try again.
-    at deserializeAws_restXmlBucketAlreadyExistsResponse (/var/runtime/node_modules/@aws-sdk/client-s3/dist-cjs/protocols/Aws_restXml.js:6113:23)
-    at deserializeAws_restXmlCreateBucketCommandError (/var/runtime/node_modules/@aws-sdk/client-s3/dist-cjs/protocols/Aws_restXml.js:3159:25)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async /var/runtime/node_modules/@aws-sdk/middleware-serde/dist-cjs/deserializerMiddleware.js:7:24
-    at async /var/runtime/node_modules/@aws-sdk/middleware-signing/dist-cjs/middleware.js:13:20
-    at async StandardRetryStrategy.retry (/var/runtime/node_modules/@aws-sdk/middleware-retry/dist-cjs/StandardRetryStrategy.js:51:46)
-    at async /var/runtime/node_modules/@aws-sdk/middleware-logger/dist-cjs/loggerMiddleware.js:6:22
-    at async S3Wrapper.create (/var/task/index.js:47:24)
-    at async Runtime.handler (/var/task/index.js:189:26) {
   '$fault': 'client',
   '$metadata': {
     httpStatusCode: 409,
@@ -61,10 +43,28 @@ ERROR	BucketAlreadyExists: The requested bucket name is not available. The bucke
     totalRetryDelay: 0
   },
   Code: 'BucketAlreadyExists',
-  BucketName: 'storage-bucket-test',
+  BucketName: 'storage-access-bucket-test',
   RequestId: 'VF6ZSV729PR4F01C',
   HostId: 'rKjIioOXPnwSC0qI2GM/YRYCzCWkc72dRA74E4m8wBGmi2FTOKaYSHV1Te/7A0wAORxLSraMB4w='
 }
+
+
+ERROR	BucketAlreadyOwnedByYou: Your previous request to create the named bucket succeeded and you already own it.
+  '$fault': 'client',
+  '$metadata': {
+    httpStatusCode: 409,
+    requestId: '045EW26A3XPVKSAE',
+    extendedRequestId: 'xyQnYiz88DlffVxi6NJmbuNqYmrhc7Iya4DNFvePjExBPKKzQVqb2n+sdXiEyOmU+BkR8+I2GjU=',
+    cfId: undefined,
+    attempts: 1,
+    totalRetryDelay: 0
+  },
+  Code: 'BucketAlreadyOwnedByYou',
+  BucketName: 'storage-access-bucket-test',
+  RequestId: '045EW26A3XPVKSAE',
+  HostId: 'xyQnYiz88DlffVxi6NJmbuNqYmrhc7Iya4DNFvePjExBPKKzQVqb2n+sdXiEyOmU+BkR8+I2GjU='
+}
+2023-10-09T22:20:26.533Z 7509dfc5-3207-4d7a-80c6-7f329e2bf8e8 ERROR BucketAlreadyOwnedByYou: Your previous request to create the named bucket succeeded and you already own it. at deserializeAws_restXmlBucketAlreadyOwnedByYouResponse (/var/runtime/node_modules/@aws-sdk/client-s3/dist-cjs/protocols/Aws_restXml.js:6122:23) at deserializeAws_restXmlCreateBucketCommandError (/var/runtime/node_modules/@aws-sdk/client-s3/dist-cjs/protocols/Aws_restXml.js:3162:25) at process.processTicksAndRejections (node:internal/process/task_queues:95:5) at async /var/runtime/node_modules/@aws-sdk/middleware-serde/dist-cjs/deserializerMiddleware.js:7:24 at async /var/runtime/node_modules/@aws-sdk/middleware-signing/dist-cjs/middleware.js:13:20 at async StandardRetryStrategy.retry (/var/runtime/node_modules/@aws-sdk/middleware-retry/dist-cjs/StandardRetryStrategy.js:51:46) at async /var/runtime/node_modules/@aws-sdk/middleware-logger/dist-cjs/loggerMiddleware.js:6:22 at async S3Wrapper.create (/var/task/index.js:48:24) at async Runtime.handler (/var/task/index.js:189:26) { '$fault': 'client', '$metadata': { httpStatusCode: 409, requestId: '045EW26A3XPVKSAE', extendedRequestId: 'xyQnYiz88DlffVxi6NJmbuNqYmrhc7Iya4DNFvePjExBPKKzQVqb2n+sdXiEyOmU+BkR8+I2GjU=', cfId: undefined, attempts: 1, totalRetryDelay: 0 }, Code: 'BucketAlreadyOwnedByYou', BucketName: 'storage-access-bucket-test', RequestId: '045EW26A3XPVKSAE', HostId: 'xyQnYiz88DlffVxi6NJmbuNqYmrhc7Iya4DNFvePjExBPKKzQVqb2n+sdXiEyOmU+BkR8+I2GjU=' }
       */
       return true;
     }
@@ -103,6 +103,33 @@ ERROR	BucketAlreadyExists: The requested bucket name is not available. The bucke
     } catch (err) {
       console.error(err);
       throw err;
+      /* keyがない場合
+ERROR	NoSuchKey: The specified key does not exist.
+    at deserializeAws_restXmlNoSuchKeyResponse (/var/runtime/node_modules/@aws-sdk/client-s3/dist-cjs/protocols/Aws_restXml.js:6155:23)
+    at deserializeAws_restXmlGetObjectCommandError (/var/runtime/node_modules/@aws-sdk/client-s3/dist-cjs/protocols/Aws_restXml.js:4353:25)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async /var/runtime/node_modules/@aws-sdk/middleware-serde/dist-cjs/deserializerMiddleware.js:7:24
+    at async /var/runtime/node_modules/@aws-sdk/middleware-signing/dist-cjs/middleware.js:13:20
+    at async StandardRetryStrategy.retry (/var/runtime/node_modules/@aws-sdk/middleware-retry/dist-cjs/StandardRetryStrategy.js:51:46)
+    at async /var/runtime/node_modules/@aws-sdk/middleware-flexible-checksums/dist-cjs/flexibleChecksumsMiddleware.js:56:20
+    at async /var/runtime/node_modules/@aws-sdk/middleware-logger/dist-cjs/loggerMiddleware.js:6:22
+    at async S3Wrapper.getObject (/var/task/index.js:82:24)
+    at async S3Wrapper.getStringObject (/var/task/index.js:96:22) {
+  '$fault': 'client',
+  '$metadata': {
+    httpStatusCode: 404,
+    requestId: 'A44ZXDVRVNVE87SX',
+    extendedRequestId: 'RIAYqvLX+uGSSRG1+SYQaUunpNEGh1KP+OXRXHtch502WJ4IN/CtUCc0kimtP8gHmiiC4NXLsMkHPrn9tLrsMg==',
+    cfId: undefined,
+    attempts: 1,
+    totalRetryDelay: 0
+  },
+  Code: 'NoSuchKey',
+  Key: 'test1',
+  RequestId: 'A44ZXDVRVNVE87SX',
+  HostId: 'RIAYqvLX+uGSSRG1+SYQaUunpNEGh1KP+OXRXHtch502WJ4IN/CtUCc0kimtP8gHmiiC4NXLsMkHPrn9tLrsMg=='
+}
+      */
     }
   }
   public async getStringObject(key: string): Promise<string | undefined> {
@@ -127,21 +154,26 @@ ERROR	BucketAlreadyExists: The requested bucket name is not available. The bucke
         })
       );
       console.log(response); // 確認用
+      /*
+{
+  '$metadata': {
+    httpStatusCode: 200,
+    requestId: 'T6PCT0E7AXWC3B3K',
+    extendedRequestId: 'WxOZ+vhfseAIS/3EoZPj/oruq5NhQg5iIwS1Tms3iGuHRy9PoPu7xvtAoz9aKX2HsFaLxyp5iIne+UZrCIQXNw==',
+    cfId: undefined,
+    attempts: 1,
+    totalRetryDelay: 0
+  },
+  ETag: '"92ac396238dbdfc6ee36abf400b1facc"',
+  ServerSideEncryption: 'AES256'
+}
+      */
       return true;
     } catch (err) {
       console.error(err);
+      // s3-ap-northeast-1.amazonaws.com
       /*
       ERROR	PermanentRedirect: The bucket you are attempting to access must be addressed using the specified endpoint. Please send all future requests to this endpoint.
-    at throwDefaultError (/var/runtime/node_modules/@aws-sdk/smithy-client/dist-cjs/default-error-handler.js:8:22)
-    at deserializeAws_restXmlPutObjectCommandError (/var/runtime/node_modules/@aws-sdk/client-s3/dist-cjs/protocols/Aws_restXml.js:5782:43)
-    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
-    at async /var/runtime/node_modules/@aws-sdk/middleware-serde/dist-cjs/deserializerMiddleware.js:7:24
-    at async /var/runtime/node_modules/@aws-sdk/middleware-signing/dist-cjs/middleware.js:13:20
-    at async StandardRetryStrategy.retry (/var/runtime/node_modules/@aws-sdk/middleware-retry/dist-cjs/StandardRetryStrategy.js:51:46)
-    at async /var/runtime/node_modules/@aws-sdk/middleware-flexible-checksums/dist-cjs/flexibleChecksumsMiddleware.js:56:20
-    at async /var/runtime/node_modules/@aws-sdk/middleware-logger/dist-cjs/loggerMiddleware.js:6:22
-    at async S3Wrapper.putStringObject (/var/task/index.js:109:24)
-    at async Runtime.handler (/var/task/index.js:195:22) {
   '$fault': 'client',
   '$metadata': {
     httpStatusCode: 301,
@@ -153,7 +185,7 @@ ERROR	BucketAlreadyExists: The requested bucket name is not available. The bucke
   },
   Code: 'PermanentRedirect',
   Endpoint: 's3.amazonaws.com',
-  Bucket: 'storage-bucket-test',
+  Bucket: 'storage-access-bucket-test',
   RequestId: 'WV0SDFA0RPXSM22B',
   HostId: '5UlhmvG1ag+P9jA8mTSXP4iby1+xds1qWf7oJ6NRXNLD9KUDCxfXH2aEpYksLjSXw73n/oGMpLy6f5nudh3B3g=='
 }

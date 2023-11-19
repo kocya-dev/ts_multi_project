@@ -17,13 +17,14 @@ export class S3StorageStack extends cdk.Stack {
 
     // S3
     const storageBucket = new cdk.aws_s3.Bucket(this, "storageBucket", {
-      bucketName: "storage-bucket-test",
+      bucketName: "storage-access-bucket-test",
       removalPolicy: cdk.RemovalPolicy.DESTROY,
+      blockPublicAccess: cdk.aws_s3.BlockPublicAccess.BLOCK_ACLS, // <-- Added
     });
 
     // S3 バケットポリシー設定
     const storageBucketPolicyStatement = new cdk.aws_iam.PolicyStatement({
-      actions: ["s3:GetObject"],
+      actions: [`*`],
       effect: cdk.aws_iam.Effect.ALLOW,
       principals: [new cdk.aws_iam.ArnPrincipal("*")],
       resources: [`${storageBucket.bucketArn}/*`],
