@@ -4,7 +4,7 @@ on:
   pull_request:
     paths:
       - "api_sample2/**"
-      - "!api_sample3/**"
+      - "api_sample3/**"
 jobs:
   build:
     runs-on: ubuntu-latest
