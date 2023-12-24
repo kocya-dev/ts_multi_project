@@ -64,13 +64,16 @@ jobs:
     runs-on: ubuntu-latest
     needs: proc_sample3
     steps:
+      - run: mkdir dl_path
       - uses: actions/download-artifact@v4
         id: download
         with:
           name: api_sample3
+          path: dl_path
       - name: check files
         run: |
           pwd
           ls -al
+          ls -al dl_path
       - name: 'Echo download path'
         run: echo ${{steps.download.outputs.download-path}}
