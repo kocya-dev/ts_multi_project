@@ -1,4 +1,4 @@
-name: sample1
+name: main updated
 
 on:
   push:
@@ -39,6 +39,12 @@ jobs:
     steps:
       - name: exec echo
         run: echo "sample2"
+      - name: save files
+        if: failure() == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: api_sample2
+          path: ./api_sample2
   proc_sample3:
     runs-on: ubuntu-latest
     needs: changes
@@ -46,4 +52,22 @@ jobs:
     steps:
       - name: exec echo
         run: echo "sample3"
+      - name: save files
+        if: failure() == 'false'
+        uses: actions/upload-artifact@v4
+        with:
+          name: api_sample3
+          path: ./api_sample3
+  event_sample3:
+    runs-on: ubuntu-latest
+    needs: proc_sample3
+    steps:
+      - name: load files
+        uses: actions/download-artifact@v2
+        with:
+          name: api_sample3
+      - name: check files
+        run: |
+          ls -al
+          ls -al ./api_sample3
     
