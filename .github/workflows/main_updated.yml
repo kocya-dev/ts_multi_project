@@ -1,0 +1,49 @@
+name: sample1
+
+on:
+  push:
+    branches: main
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+      contents: read
+    outputs:
+      s1: ${{ steps.filter.outputs.s1 }}
+      s2: ${{ steps.filter.outputs.s2 }}
+      s3: ${{ steps.filter.outputs.s3 }}
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            s1:
+              - api_sample1/**
+            s2:
+              - api_sample2/**
+            s3:
+              - api_sample3/**
+  proc_sample1:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.s1 == 'true' }}
+    steps:
+      - name: exec echo
+        run: echo "sample1"
+  proc_sample2:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.s2 == 'true' }}
+    steps:
+      - name: exec echo
+        run: echo "sample2"
+  proc_sample3:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.s3 == 'true' }}
+    steps:
+      - name: exec echo
+        run: echo "sample3"
+    
