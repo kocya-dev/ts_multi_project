@@ -53,16 +53,13 @@ jobs:
     outputs:
       ul_path: ${{ steps.upload.outputs.download-path} }}
     steps:
-      - name: checkout
-        uses: actions/checkout@v4
-      - name: exec echo
-        run: |
+      - uses: actions/checkout@v4
+      - run: |
           echo "sample3"
           pwd
           ls -al
-      - name: save files
+      - uses: actions/upload-artifact@v4
         id: upload
-        uses: actions/upload-artifact@v4
         with:
           name: api_sample3
           path: ./api_sample3
