@@ -51,10 +51,13 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.s3 == 'true' }}
     steps:
+      - name: checkout
+        uses: actions/checkout@v4
       - name: exec echo
         run: |
           echo "sample3"
           pwd
+          ls -al
       - name: save files
         uses: actions/upload-artifact@v4
         with:
