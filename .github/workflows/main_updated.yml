@@ -70,7 +70,7 @@ jobs:
           name: api_sample3
       - name: check files
         run: |
+          pwd
           ls -al
-          ls -al ./api_sample3
       - name: 'Echo download path'
         run: echo ${{steps.download.outputs.download-path}}
