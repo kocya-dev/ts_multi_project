@@ -40,7 +40,6 @@ jobs:
       - name: exec echo
         run: echo "sample2"
       - name: save files
-        if: failure() == 'false'
         uses: actions/upload-artifact@v4
         with:
           name: api_sample2
@@ -53,7 +52,6 @@ jobs:
       - name: exec echo
         run: echo "sample3"
       - name: save files
-        if: failure() == 'false'
         uses: actions/upload-artifact@v4
         with:
           name: api_sample3
