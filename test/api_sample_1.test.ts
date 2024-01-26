@@ -5,6 +5,45 @@ import { mockClient } from "aws-sdk-client-mock";
 const mockDynamoDBDocumentClient = mockClient(DynamoDBDocumentClient);
 import { handler } from "../api_sample1/getUser";
 
+class TestError extends Error {
+  constructor(message: string, public value: number) {
+    super(message);
+  }
+  override toString = (): string => `{ message: ${this.message}, value: ${this.value}}`;
+}
+
+expect.extend({
+  toThrowTestError(receivedFunc: any, actual: TestError): jest.CustomMatcherResult {
+    try {
+      receivedFunc();
+      return {
+        message: () => `not thrown`,
+        pass: false,
+      };
+    } catch (e: any) {
+      const isEqualTestError = (e: any, actual: TestError): boolean => {
+        if (!(e instanceof TestError)) return false;
+        const occured: TestError = e as TestError;
+        if (occured.message != actual.message) return false;
+        if (occured.value != actual.value) return false;
+        return true;
+      };
+      const pass = isEqualTestError(e, actual);
+      if (pass) {
+        return {
+          message: () => `expected ${e} equal ${actual}`,
+          pass: true,
+        };
+      } else {
+        return {
+          message: () => `expected ${e} not equal ${actual}`,
+          pass: false,
+        };
+      }
+    }
+  },
+});
+
 beforeEach(() => {
   mockDynamoDBDocumentClient.reset();
 });
@@ -119,6 +158,24 @@ describe("getuser", () => {
     const response: APIGatewayProxyResult = await handler(event);
 
     expect(response.statusCode).toBe(500);
+  });
+
+  describe("parent1", () => {
+    test("ut:test", async () => {
+      expect(() => {
+        throw new TestError("xxx", 1);
+      }).toThrowTestError(new TestError("xxx", 1));
+    });
+    test("ut:test", async () => {
+      expect(() => {
+        throw new TestError("xxx", 1);
+      }).not.toThrowTestError(new TestError("xxx", 2));
+    });
+    test("ut:test2", async () => {
+      expect(() => {
+        throw new TestError("xxy", 1);
+      }).not.toThrowTestError(new TestError("xxx", 1));
+    });
   });
 
   test("it:getUser ダミー1", async () => {});
