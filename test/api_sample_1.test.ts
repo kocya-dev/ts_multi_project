@@ -13,7 +13,7 @@ class TestError extends Error {
 }
 
 expect.extend({
-  toThrowTestError(receivedFunc: any, actual: TestError): jest.CustomMatcherResult {
+  toThrowTestError(receivedFunc: any, expectError: TestError): jest.CustomMatcherResult {
     try {
       receivedFunc();
       return {
@@ -21,22 +21,22 @@ expect.extend({
         pass: false,
       };
     } catch (e: any) {
-      const isEqualTestError = (e: any, actual: TestError): boolean => {
+      const isEqualTestError = (e: any, expectError: TestError): boolean => {
         if (!(e instanceof TestError)) return false;
         const occured: TestError = e as TestError;
-        if (occured.message != actual.message) return false;
-        if (occured.value != actual.value) return false;
+        if (occured.message != expectError.message) return false;
+        if (occured.value != expectError.value) return false;
         return true;
       };
-      const pass = isEqualTestError(e, actual);
+      const pass = isEqualTestError(e, expectError);
       if (pass) {
         return {
-          message: () => `expected ${e} equal ${actual}`,
+          message: () => `expected ${e} equal ${expectError}`,
           pass: true,
         };
       } else {
         return {
-          message: () => `expected ${e} not equal ${actual}`,
+          message: () => `expected ${e} not equal ${expectError}`,
           pass: false,
         };
       }
@@ -166,12 +166,12 @@ describe("getuser", () => {
         throw new TestError("xxx", 1);
       }).toThrowTestError(new TestError("xxx", 1));
     });
-    it("ut:test", async () => {
+    it("ut:test2", async () => {
       expect(() => {
         throw new TestError("xxx", 1);
       }).not.toThrowTestError(new TestError("xxx", 2));
     });
-    it("ut:test2", async () => {
+    it("ut:test3", async () => {
       expect(() => {
         throw new TestError("xxy", 1);
       }).not.toThrowTestError(new TestError("xxx", 1));
