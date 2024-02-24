@@ -141,3 +141,7 @@ cdk.out
 
 # jest report
 jest_html_reporters.html
+
+# vitest
+coverage
+html
