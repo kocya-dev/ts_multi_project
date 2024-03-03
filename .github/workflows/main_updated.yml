@@ -75,5 +75,31 @@ jobs:
           pwd
           ls -al
           ls -al dl_path
-      - name: 'Echo download path'
+      - name: "Echo download path"
         run: echo ${{steps.download.outputs.download-path}}
+  gather_events:
+    runs-on: ubuntu-latest
+    needs: [proc_sample1, proc_sample2, event_sample3]
+    steps:
+      - run: echo "gather_events"
+  after_proc_sample1:
+    runs-on: ubuntu-latest
+    needs: [changes, gather_events]
+    if: ${{ needs.changes.outputs.s1 == 'true' }}
+    steps:
+      - name: exec echo
+        run: echo "after sample1"
+  after_proc_sample2:
+    runs-on: ubuntu-latest
+    needs: [changes, gather_events]
+    if: ${{ needs.changes.outputs.s2 == 'true' }}
+    steps:
+      - name: exec echo
+        run: echo "after sample2"
+  after_proc_sample3:
+    runs-on: ubuntu-latest
+    needs: [changes, gather_events]
+    if: ${{ needs.changes.outputs.s3 == 'true' }}
+    steps:
+      - name: exec echo
+        run: echo "after sample3"
