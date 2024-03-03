@@ -92,7 +92,7 @@ jobs:
   after_proc_sample2:
     runs-on: ubuntu-latest
     needs: [changes, gather_events]
-    if: ${{ needs.changes.outputs.s2 == 'true' }}
+    if: ${{ !cancelled() && !failure() == 'true' && needs.changes.outputs.s2 == 'true' }}
     steps:
       - name: exec echo
         run: echo "after sample2"
