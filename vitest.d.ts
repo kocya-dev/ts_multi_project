@@ -5,15 +5,13 @@ export interface CustomMatchers<R = unknown> {
 }
 
 declare module "vitest" {
-  namespace jest {
-    /*
+  /*
     interface Expect extends CustomMatchers {}
     interface Matchers<R> extends CustomMatchers<R> {}
     interface InverseAsymmetricMatchers extends CustomMatchers {}
     */
-    interface Assertion<T = any> extends CustomMatchers<T> {}
-    interface AsymmetricMatchersContaining extends CustomMatchers {}
-  }
+  interface Assertion<T = any> extends CustomMatchers<T> {}
+  interface AsymmetricMatchersContaining extends CustomMatchers {}
 }
 //export interface CustomMatchers<R = unknown> {
 //  toThrowTestError(a: any): R;
