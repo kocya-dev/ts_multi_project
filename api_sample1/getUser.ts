@@ -3,11 +3,12 @@ import { APIGatewayProxyEvent, APIGatewayProxyResult } from "aws-lambda";
 import { DynamoDBWrapper } from "./dynamoDBWrapper";
 import { UserItem } from "./dynamoDBWrapperTypes";
 import { createSucceed, createFail, createInvalidArgumentError, createArgumentRangeError } from "./createResponse";
+import { logger } from "../logger/logger";
 
 // Lambda エントリーポイント
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  console.log("Hello Lambda!");
-  console.log(event);
+  logger("Hello Lambda!");
+  logger(event);
 
   if (!event.pathParameters || !event.pathParameters["user_id"]) {
     return createInvalidArgumentError();
@@ -22,14 +23,14 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     const dynamo: DynamoDBWrapper = new DynamoDBWrapper();
     const output: UserItem = await dynamo.getUser(id);
     if (output) {
-      console.log("SUCCESS (get item valid):", output);
+      logger("SUCCESS (get item valid):", output);
       return createSucceed(output);
     } else {
-      console.log("SUCCESS (no item):");
+      logger("SUCCESS (no item):");
       return createFail("no item");
     }
   } catch (err) {
-    console.log("ERROR:", err);
+    logger("ERROR:", err);
     return createFail(JSON.stringify(err));
   }
 };

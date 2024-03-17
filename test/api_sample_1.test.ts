@@ -4,45 +4,7 @@ import { DynamoDBDocumentClient, GetCommand, QueryCommand, GetCommandOutput, Put
 import { mockClient } from "aws-sdk-client-mock";
 const mockDynamoDBDocumentClient = mockClient(DynamoDBDocumentClient);
 import { handler } from "../api_sample1/getUser";
-
-class TestError extends Error {
-  constructor(message: string, public value: number) {
-    super(message);
-  }
-  override toString = (): string => `{ message: ${this.message}, value: ${this.value}}`;
-}
-
-expect.extend({
-  toThrowTestError(receivedFunc: any, expectError: TestError): jest.CustomMatcherResult {
-    try {
-      receivedFunc();
-      return {
-        message: () => `not thrown`,
-        pass: false,
-      };
-    } catch (e: any) {
-      const isEqualTestError = (e: any, expectError: TestError): boolean => {
-        if (!(e instanceof TestError)) return false;
-        const occured: TestError = e as TestError;
-        if (occured.message != expectError.message) return false;
-        if (occured.value != expectError.value) return false;
-        return true;
-      };
-      const pass = isEqualTestError(e, expectError);
-      if (pass) {
-        return {
-          message: () => `expected ${e} equal ${expectError}`,
-          pass: true,
-        };
-      } else {
-        return {
-          message: () => `expected ${e} not equal ${expectError}`,
-          pass: false,
-        };
-      }
-    }
-  },
-});
+import { TestError } from "./testError";
 
 beforeEach(() => {
   mockDynamoDBDocumentClient.reset();
@@ -167,6 +129,30 @@ describe("getuser", () => {
       }).toThrowTestError(new TestError("xxx", 1));
     });
     it("ut:test2", async () => {
+      expect(() => {
+        throw new TestError("xxx", 1);
+      }).not.toThrowTestError(new TestError("xxx", 2));
+    });
+    it("ut:test3", async () => {
+      expect(() => {
+        throw new TestError("xxy", 1);
+      }).not.toThrowTestError(new TestError("xxx", 1));
+    });
+  });
+
+  describe("ut:parent1", () => {
+    beforeAll(() => {
+      console.log("ut:parent1.beforeAll");
+    });
+    beforeEach(() => {
+      console.log("ut:parent1.beforeEach");
+    });
+    it("test", async () => {
+      expect(() => {
+        throw new TestError("xxx", 1);
+      }).toThrowTestError(new TestError("xxx", 1));
+    });
+    it("test2", async () => {
       expect(() => {
         throw new TestError("xxx", 1);
       }).not.toThrowTestError(new TestError("xxx", 2));
