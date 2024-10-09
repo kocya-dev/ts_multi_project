@@ -18,4 +18,6 @@ jobs:
     environment: ${{inputs.target}}
     steps:
     - name: Send greeting
-      run: echo "key is ${{ secrets.TEST_KEY }}"
+      run: |
+        echo "key is ${{ secrets.TEST_KEY }}"
+        echo "key is ${{ vars.TEST_VARS }}"
