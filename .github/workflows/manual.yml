@@ -1,0 +1,21 @@
+# This is a basic workflow that is manually triggered
+
+name: Manual workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: 'Person to greet'
+        type: choice
+        options: 
+        - DEV
+        - PRD
+
+jobs:
+  greet:
+    runs-on: ubuntu-latest
+    environment: ${{inputs.target}}
+    steps:
+    - name: Send greeting
+      run: echo "key is ${{ secrets.TEST_KEY }}"
