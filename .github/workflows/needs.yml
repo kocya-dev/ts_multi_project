@@ -1,0 +1,28 @@
+name: needs
+
+on:
+  workflow_dispatch:
+jobs:
+  job-a:
+    runs-on: ubuntu-latest
+    steps:
+      - run: sleep 5
+      - run: echo "job-a completed"
+  job-b:
+    needs: job-a
+    runs-on: ubuntu-latest
+    steps:
+      - run: sleep 5
+      - run: echo "job-a completed"
+  job-c:
+    needs: job-a
+    runs-on: ubuntu-latest
+    steps:
+      - run: sleep 10
+      - run: echo "job-a completed"
+  job-d:
+    needs: [job-b, job-c]
+    runs-on: ubuntu-latest
+    steps:
+      - run: sleep 10
+      - run: echo "job-a completed"
