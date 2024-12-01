@@ -1,0 +1,14 @@
+name: sample1
+
+on:
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }} # ブランチ問わず先行ワークフローを待つ
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: sleep
+        run: sleep 30
+      - name: exec echo
+        run: echo "after 30s"
