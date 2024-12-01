@@ -1,4 +1,4 @@
-name: sample1
+name: concurrency_wait
 
 on:
   workflow_dispatch:
