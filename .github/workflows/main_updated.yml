@@ -39,6 +39,7 @@ jobs:
     needs: changes
     if: ${{ needs.changes.outputs.s2 == 'true' }}
     steps:
+      - uses: actions/checkout@v4
       - uses: Kesin11/actions-timeline@v1
       - name: exec echo
         run: echo "sample2"
