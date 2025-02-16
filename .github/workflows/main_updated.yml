@@ -126,7 +126,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
       #    command: test
-          args: --sarif-file-output=snyk.sarif
+          args: --sarif-file-output=snyk.sarif --dev
       #- name: snyk actions code
       #  continue-on-error: true
       #  uses: snyk/actions/node@master
